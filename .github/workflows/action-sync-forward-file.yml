@@ -15,7 +15,7 @@ jobs:
 
       - name: Read config and sync files
         run: |
-          config=$(cat sync-config-forward-file.json)
+          config=$(cat config-sync-forward-file.json)
 
           echo "$config" | jq -r '.[] | @base64' | while read item; do
             row() {
@@ -46,7 +46,7 @@ jobs:
           git add Forward/
 
           if ! git diff --cached --quiet; then
-            git commit -m "Sync files from sync-config-forward-file.json"
+            git commit -m "Sync files from config-sync-forward-file.json"
             git push
           else
             echo "No changes to commit"
