@@ -1,10 +1,10 @@
 [
   {
     "url": "https://raw.githubusercontent.com/MakkaPakka518/FW/refs/heads/main/widgets/normal/ALLINONE.js",
-    "dest": "Forward/MAKKA/ALLINONE.js"
+    "dest": "Forward/MAKKA/"
   },
   {
     "url": "https://raw.githubusercontent.com/MakkaPakka518/FW/refs/heads/main/widgets/normal/Globalseries.js",
-    "dest": "Forward/MAKKA/Globalseries.js"
+    "dest": "Forward/MAKKA/"
   }
 ]
