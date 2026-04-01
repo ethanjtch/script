@@ -6,5 +6,9 @@
   {
     "url": "https://github.com/huangxd-/ForwardWidgets/tree/main/widgets",
     "dest": "Forward/Huangxd/"
+  },
+  {
+    "url": "https://github.com/2kuai/ForwardWidgets/tree/main/Widgets",
+    "dest": "Forward/2kuai/"
   }
 ]
