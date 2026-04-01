@@ -2,5 +2,9 @@
   {
     "url": "https://github.com/MakkaPakka518/FW/tree/main/widgets/normal",
     "dest": "Forward/MAKKA/"
+  },
+  {
+    "url": "https://github.com/huangxd-/ForwardWidgets/tree/main/widgets",
+    "dest": "Forward/Huangxd/"
   }
 ]
