@@ -1,0 +1,55 @@
+name: Sync Files From URLs
+
+on:
+  schedule:
+    - cron: '0 6 * * *'  # 每天 06:00 UTC
+  workflow_dispatch:
+
+jobs:
+  update_files:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout this repository
+        uses: actions/checkout@v4
+
+      - name: Read config and sync files
+        run: |
+          config=$(cat forward-sync-config.json)
+
+          echo "$config" | jq -r '.[] | @base64' | while read item; do
+            row() {
+              echo "$item" | base64 --decode | jq -r "$1"
+            }
+
+            url=$(row '.url')
+            dest=$(row '.dest')
+            filename=$(basename "$url")
+            target_file="${dest}${filename}"
+
+            mkdir -p "$dest"
+
+            if [ -f "$target_file" ]; then
+              curl -L -z "$target_file" -o "$target_file" "$url"
+              echo "Checked: $target_file"
+            else
+              curl -L -o "$target_file" "$url"
+              echo "Downloaded new file: $target_file"
+            fi
+          done
+
+      - name: Commit and push changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+
+          git add Forward/
+
+          if ! git diff --cached --quiet; then
+            git commit -m "Sync files from forward-sync-config.json"
+            git push
+          else
+            echo "No changes to commit"
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
