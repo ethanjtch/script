@@ -1,4 +1,4 @@
-name: Sync Folders From URLs
+name: Sync Forward Folder
 
 on:
   schedule:
