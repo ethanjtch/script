@@ -2,5 +2,13 @@
   {
     "url": "https://raw.githubusercontent.com/EmrysChoo/ForwardWidgets/refs/heads/main/Widgets/person_movie.js",
     "dest": "Forward/Widget/"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/MakkaPakka518/FW/refs/heads/main/widgets/qt/letterboxd.js",
+    "dest": "Forward/Widget/"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/MakkaPakka518/FW/refs/heads/main/widgets/danmu/Danmubinfa.js",
+    "dest": "Forward/Widget/"
   }
 ]
