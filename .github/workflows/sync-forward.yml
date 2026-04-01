@@ -2,7 +2,7 @@ name: Sync Forward Widgets
 
 on:
   schedule:
-    - cron: '0 6 * * *'  # 每天 06:00 UTC
+    - cron: "0 6 * * *" # 每天 06:00 UTC
   workflow_dispatch:
 
 jobs:
@@ -15,7 +15,7 @@ jobs:
 
       - name: Read config and sync files
         run: |
-          config=$(cat forward-sync-config.json)
+          config=$(cat sync-config-forward-file.json)
 
           echo "$config" | jq -r '.[] | @base64' | while read item; do
             row() {
@@ -46,7 +46,7 @@ jobs:
           git add Forward/
 
           if ! git diff --cached --quiet; then
-            git commit -m "Sync files from forward-sync-config.json"
+            git commit -m "Sync files from sync-config-forward-file.json"
             git push
           else
             echo "No changes to commit"
