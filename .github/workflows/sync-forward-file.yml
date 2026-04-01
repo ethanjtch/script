@@ -1,4 +1,4 @@
-name: Sync Forward Widgets
+name: Sync Forward File
 
 on:
   schedule:
