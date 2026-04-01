@@ -1,0 +1,74 @@
+name: Sync Folders From URLs
+
+on:
+  schedule:
+    - cron: '30 6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update_folders:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout this repository
+        uses: actions/checkout@v4
+
+      - name: Read config and sync folders
+        run: |
+          config=$(cat forward-folder-sync-config.json)
+
+          echo "$config" | jq -r '.[] | @base64' | while read item; do
+            row() {
+              echo "$item" | base64 --decode | jq -r "$1"
+            }
+
+            folder_url=$(row '.url')
+            dest=$(row '.dest')
+
+            mkdir -p "${dest%/}"
+
+            # 解析 GitHub tree URL:
+            # https://github.com/OWNER/REPO/tree/BRANCH/path/to/folder
+            parsed=$(echo "$folder_url" | sed -E 's|https://github.com/([^/]+)/([^/]+)/tree/([^/]+)/(.*)|\1 \2 \3 \4|')
+            owner=$(echo "$parsed" | awk '{print $1}')
+            repo=$(echo "$parsed" | awk '{print $2}')
+            branch=$(echo "$parsed" | awk '{print $3}')
+            folder_path=$(echo "$parsed" | cut -d' ' -f4-)
+
+            api_url="https://api.github.com/repos/$owner/$repo/contents/$folder_path?ref=$branch"
+
+            curl -s "$api_url" | jq -r '.[] | select(.type=="file") | @base64' | while read fileitem; do
+              frow() {
+                echo "$fileitem" | base64 --decode | jq -r "$1"
+              }
+
+              download_url=$(frow '.download_url')
+              filename=$(frow '.name')
+              target_file="${dest%/}/$filename"
+
+              if [ -f "$target_file" ]; then
+                curl -L -z "$target_file" -o "$target_file" "$download_url"
+                echo "Checked: $target_file"
+              else
+                curl -L -o "$target_file" "$download_url"
+                echo "Downloaded new file: $target_file"
+              fi
+            done
+          done
+
+      - name: Commit and push changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+
+          git add Forward/
+
+          if ! git diff --cached --quiet; then
+            git commit -m "Sync folders from forward-folder-sync-config.json"
+            git push
+          else
+            echo "No changes to commit"
+          fi
